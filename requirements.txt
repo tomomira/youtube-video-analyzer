@@ -1,0 +1,16 @@
+# YouTube API
+google-api-python-client==2.100.0
+google-auth-httplib2==0.1.1
+google-auth-oauthlib==1.1.0
+
+# Excel操作
+openpyxl==3.1.2
+
+# Google Sheets API
+gspread==5.11.3
+
+# 環境変数管理
+python-dotenv==1.0.0
+
+# 日付処理
+isodate==0.6.1
