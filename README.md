@@ -267,12 +267,12 @@ cat .env
 YOUTUBE_API_KEY=your_actual_api_key_here
 ```
 
-#### Q: 検索結果が0件
+#### Q: 検索結果が0件（フィルタリングが原因）
 
-**A**: 以下を確認：
-1. APIクォータが残っているか（1日10,000ユニット）
-2. 検索条件が厳しすぎないか
-3. キーワードが適切か
+**A**: 最小再生回数/最大再生回数を空欄にしてみてください。
+- ログに「検索結果: X件の動画IDを取得」→「フィルタリング後: 0件」と表示される場合、フィルタが厳しすぎます
+- **最小再生回数**: この値**以上**の動画（人気動画に絞る）
+- **最大再生回数**: この値**以下**の動画（あまり人気でない動画も含む）
 
 #### Q: モジュールが見つからないエラー
 
@@ -283,7 +283,36 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-**詳細は [インストールガイド](./docs/installation-guide.md#トラブルシューティング) を参照**
+#### Q: tkinterが見つからない（Linux/WSL）
+
+**A**: python3-tkをインストールしてください
+
+```bash
+# Ubuntu/Debian
+sudo apt-get install python3-tk
+
+# Fedora/CentOS
+sudo dnf install python3-tkinter
+```
+
+#### Q: 日本語が□□□と表示される（Linux/WSL）
+
+**A**: 日本語フォントをインストールしてください
+
+```bash
+# Ubuntu/Debian
+sudo apt-get install fonts-noto-cjk fonts-noto-cjk-extra
+```
+
+#### Q: Excelエクスポート時にタイムゾーンエラー
+
+**A**: この問題は最新版で修正済みです。アプリケーションを再起動してください。
+
+#### Q: WSLで日本語入力ができない
+
+**A**: コピー&ペーストを使用するか、Windows環境で実行してください。
+
+**詳細は [インストールガイド - トラブルシューティング](./docs/installation-guide.md#トラブルシューティング) を参照**
 
 ---
 

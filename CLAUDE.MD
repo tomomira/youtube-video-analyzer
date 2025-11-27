@@ -107,6 +107,7 @@ youtube-video-analyzer/
 │
 ├── test_youtube_api.py         # YouTube API動作確認スクリプト
 ├── test_logger_usage.py        # ロガー使用例
+├── test_core_functionality.py  # コア機能動作確認（GUIなし）
 ├── validate_build_config.py    # ビルド設定検証スクリプト
 │
 ├── youtube_analyzer.spec       # PyInstallerビルド設定
@@ -291,6 +292,9 @@ python test_youtube_api.py
 # ロガー動作確認
 python test_logger_usage.py
 
+# コア機能動作確認（GUIなし）
+python test_core_functionality.py
+
 # ビルド設定検証
 python validate_build_config.py
 ```
@@ -379,6 +383,39 @@ except HttpError as e:
 
 ## トラブルシューティング
 
+### 開発環境関連
+
+#### tkinterが見つからない（WSL/Linux）
+**問題**: `ModuleNotFoundError: No module named 'tkinter'`
+**解決策**:
+```bash
+# Ubuntu/Debian
+sudo apt-get install python3-tk
+
+# Fedora/CentOS
+sudo dnf install python3-tkinter
+```
+
+#### 日本語フォントが表示されない（WSL/Linux）
+**問題**: GUIで日本語が□□□（豆腐）として表示される
+**解決策**:
+```bash
+# Ubuntu/Debian
+sudo apt-get install fonts-noto-cjk fonts-noto-cjk-extra
+
+# Fedora/CentOS
+sudo dnf install google-noto-sans-cjk-jp-fonts
+```
+
+#### WSLとWindows間で仮想環境が共有できない
+**問題**: WSL環境で作成したvenvがWindows側で動作しない
+**解決策**:
+- WSL環境: `venv/bin/activate`
+- Windows環境: `venv\Scripts\activate`
+- それぞれの環境で別々の仮想環境を作成してください
+
+詳細: `docs/installation-guide.md` のトラブルシューティングセクション参照
+
 ### YouTube API関連
 
 **問題**: API呼び出しで403エラー
@@ -388,6 +425,45 @@ except HttpError as e:
 3. APIクォータが残っているか確認
 
 **参考**: `docs/youtube-api-setup-guide.md`
+
+**問題**: 検索結果が0件（フィルタリングが原因）
+**解決策**:
+- 最小再生回数/最大再生回数を空欄にしてみる
+- ログで「検索結果: X件の動画IDを取得」→「フィルタリング後: 0件」となっている場合、フィルタが厳しすぎる
+- 最小再生回数は「以上」、最大再生回数は「以下」を意味する
+
+### エクスポート機能関連
+
+**問題**: `TypeError: Excel does not support timezones in datetimes`
+**解決策**:
+- この問題は `src/infrastructure/excel_exporter.py` line 153 で修正済み
+- 古いバージョンを使用している場合は最新版に更新してください
+
+**問題**: Google Sheetsエクスポートできない
+**解決策**:
+```bash
+# ライブラリをインストール
+pip install gspread google-auth
+
+# 認証情報を設定
+# 1. Google Cloud Consoleでサービスアカウントを作成
+# 2. JSONキーをダウンロード
+# 3. .envに GOOGLE_CREDENTIALS_PATH=credentials.json を追加
+```
+
+### UI/UX関連
+
+**問題**: WSLで日本語IME入力ができない
+**解決策**:
+1. コピー&ペーストを使用（推奨）
+2. Windows環境で実行
+3. fcitx-mozcをインストール（上級者向け）
+
+**問題**: プリセットが読み込めない
+**解決策**:
+- プリセットドロップダウンから選択後に「読込」ボタンをクリック
+- プリセットは検索条件を保存するもので、結果は保存されない
+- 読み込み後に再度「検索」ボタンをクリックする必要がある
 
 ### 依存パッケージ関連
 
@@ -406,6 +482,12 @@ pip install -r requirements.txt
 mkdir -p logs  # logsディレクトリを作成
 python src/utils/logger.py  # ロガーをテスト実行
 ```
+
+### 詳細なトラブルシューティング
+
+上記以外の詳細なトラブルシューティング情報は以下を参照してください：
+- [インストールガイド - トラブルシューティング](./docs/installation-guide.md#トラブルシューティング)
+- [ユーザーマニュアル - よくある質問](./docs/user-manual.md#よくある質問)
 
 ## 参考資料
 
