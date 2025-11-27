@@ -1,95 +1,160 @@
-# YouTube Video Analyzer & Exporter
+# YouTube Video Analyzer
 
-YouTube上の人気動画を効率的に調査・分析し、Excel/Googleスプレッドシートに出力するデスクトップアプリケーション
+<p align="center">
+  <strong>YouTube動画を効率的に検索・分析し、Excel/Google Spreadsheetsにエクスポートするデスクトップアプリケーション</strong>
+</p>
 
-## 概要
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.10+-blue.svg" alt="Python Version">
+  <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License">
+  <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg" alt="Platform">
+</p>
 
-このアプリケーションは、YouTube Data API v3を使用して、特定の条件（キーワード、再生回数、動画タイプなど）で動画を検索し、その情報を構造化されたデータとして取得・エクスポートします。
+---
 
-### 主な機能
+## 📋 概要
 
-- **検索条件設定**: キーワード、再生回数、動画タイプ（通常/ショート）、公開日範囲などで絞り込み
-- **動画情報取得**: タイトル、URL、再生回数、チャンネル名、公開日、概要など詳細情報を取得
-- **Excelエクスポート**: 取得した情報を整形してExcelファイル（.xlsx）に出力
-- **Googleスプレッドシート連携**: Googleスプレッドシートへの直接書き込み
-- **プリセット保存**: よく使う検索条件を保存して再利用
-- **進捗表示**: データ取得中の進捗状況をリアルタイム表示
+YouTube Video Analyzerは、YouTube Data API v3を使用して、キーワードや再生回数などの条件で動画を検索し、結果をExcelファイルやGoogle Spreadsheetsにエクスポートできるデスクトップアプリケーションです。
 
-## プロジェクトドキュメント
+### ✨ 主な機能
 
-### 企画・設計ドキュメント
-- [要件定義書](./research/youtube-video-analyzer-requirements.md) - システムの目的、機能要件、非機能要件
-- [実装計画書](./research/implementation-plan.md) - 技術スタック、開発フェーズ、詳細な実装計画
-- [専用アプリ開発のメリット](./research/why-build-dedicated-app.md) - AIツールとの比較、開発の意義
+- 🔍 **高度な検索**: キーワード、再生回数、動画タイプ（通常/ショート）で絞り込み
+- 📊 **見やすい結果表示**: テーブル形式で表示、列ごとにソート可能
+- 📁 **Excelエクスポート**: 整形された.xlsxファイルに出力
+- ☁️ **Google Sheets連携**: クラウド上のスプレッドシートに直接書き込み
+- 💾 **プリセット機能**: よく使う検索条件を保存して再利用
+- 📜 **検索履歴**: 過去の検索を確認・再実行
+- 🎯 **ショート動画判定**: 60秒以下の動画を自動識別
 
-### ユーザー向けドキュメント（実装後）
-- [ユーザーマニュアル](./docs/user_manual.md) - 使い方の詳細
-- [API仕様書](./docs/api_reference.md) - 内部API仕様
+---
 
-## セットアップ
+## 🖼️ スクリーンショット
 
-### 前提条件
+```
+┌─────────────────────────────────────────────────────────┐
+│ YouTube Video Analyzer                                  │
+├─────────────────────────────────────────────────────────┤
+│ プリセット: [Python動画検索] [読込][保存][削除]         │
+│ 検索キーワード: [Python tutorial___________________]    │
+│ 最小再生回数: [10000] 最大再生回数: [_______]           │
+│ 動画タイプ: ◉すべて ○ショート ○通常                   │
+│ 最大取得件数: [50] ソート順: [viewCount▼]              │
+│                      [検索]                              │
+├─────────────────────────────────────────────────────────┤
+│ 検索結果: 42件           [Excelにエクスポート]          │
+│┌───────────────────────────────────────────────────────┐│
+││タイトル         │チャンネル  │再生回数│長さ │公開日││
+││Python Tutorial  │Code Academy│1.2M    │15:32│2024...││
+││Learn Python...  │Tech Channel│850K    │22:15│2024...││
+│└───────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────┘
+```
 
-- Python 3.10以上
-- YouTube Data API v3のAPIキー（[取得方法](https://console.cloud.google.com/)）
+---
+
+## 🚀 クイックスタート
+
+### システム要件
+
+- **Python**: 3.10以上
+- **OS**: Windows 10/11, macOS 10.14+, Linux（Ubuntu 20.04+）
+- **インターネット接続**: YouTube API利用に必要
 
 ### インストール
 
 ```bash
-# 1. リポジトリをクローン（または解凍）
+# 1. リポジトリをクローン
+git clone https://github.com/your-repo/youtube-video-analyzer.git
 cd youtube-video-analyzer
 
-# 2. 仮想環境を作成
+# 2. 仮想環境を作成して有効化
 python -m venv venv
+source venv/bin/activate  # macOS/Linux
+venv\Scripts\activate     # Windows
 
-# 3. 仮想環境を有効化
-# Windows
-venv\Scripts\activate
-# Mac/Linux
-source venv/bin/activate
-
-# 4. 依存パッケージをインストール
+# 3. 依存パッケージをインストール
 pip install -r requirements.txt
 
-# 5. 環境変数を設定
+# 4. 環境変数を設定
 cp .env.example .env
 # .envファイルを編集してYouTube APIキーを設定
-
-# 6. データベースを初期化（実装後）
-python src/database/init_db.py
 ```
 
-## 使い方
+### YouTube APIキーの取得
 
-### 基本的な使い方
+1. [Google Cloud Console](https://console.cloud.google.com/)にアクセス
+2. 新しいプロジェクトを作成
+3. 「YouTube Data API v3」を有効化
+4. APIキーを作成
+5. `.env`ファイルに設定
+
+**詳しい手順は [YouTube API セットアップガイド](./docs/youtube-api-setup-guide.md) を参照**
+
+### 起動
 
 ```bash
-# アプリケーションを起動
 python src/main.py
 ```
 
-1. キーワードと検索条件を入力
-2. 「検索」ボタンをクリック
-3. 結果を確認
-4. 「Excelエクスポート」ボタンで出力
+---
 
-### プリセットの使用
+## 📖 ドキュメント
 
-1. 検索条件を設定
-2. 「プリセット保存」ボタンをクリック
-3. プリセット名を入力して保存
-4. 次回以降、「プリセット読込」から選択して使用
+### ユーザー向け
 
-## 開発
+- 📘 [インストールガイド](./docs/installation-guide.md) - 詳細なインストール手順
+- 📙 [ユーザーマニュアル](./docs/user-manual.md) - 機能の使い方
+- 📗 [YouTube API セットアップガイド](./docs/youtube-api-setup-guide.md) - API設定方法
+
+### 開発者向け
+
+- 📕 [CLAUDE.MD](./CLAUDE.MD) - プロジェクト全体の開発情報
+- 📓 [実装計画書](./research/implementation-plan.md) - 技術スタック、開発フェーズ
+- 📔 [Phase完了報告](./research/) - 各フェーズの詳細な実装内容
+
+---
+
+## 💡 使い方
+
+### 基本的な検索
+
+1. **検索キーワード**を入力（例: "Python tutorial"）
+2. **検索条件**を設定（再生回数、動画タイプなど）
+3. **検索**ボタンをクリック
+4. 結果をテーブルで確認
+
+### プリセットの活用
+
+```
+よく使う検索条件を保存:
+1. 検索条件を入力
+2. 「保存」ボタンをクリック
+3. プリセット名を入力
+
+次回の使用:
+1. プリセットを選択
+2. 「読込」ボタンをクリック
+3. 「検索」ボタンをクリック
+```
+
+### エクスポート
+
+- **Excel**: 「Excelにエクスポート」ボタン → 保存先を選択
+- **Google Sheets**: メニューバー「ファイル」→「Google Sheetsにエクスポート」
+
+### 検索履歴
+
+メニューバー「表示」→「検索履歴」で過去の検索を確認・再実行
+
+---
+
+## 🛠️ 開発
 
 ### 開発環境のセットアップ
 
 ```bash
 # 開発用パッケージをインストール
 pip install -r requirements-dev.txt
-
-# pre-commitフックをインストール（オプション）
-pre-commit install
 ```
 
 ### テストの実行
@@ -98,78 +163,166 @@ pre-commit install
 # 全テストを実行
 pytest
 
-# カバレッジ付きで実行
+# カバレッジ付き
 pytest --cov=src --cov-report=html
 
-# カバレッジレポートを開く
-open htmlcov/index.html
+# 統合テストのみ
+pytest tests/test_integration.py -v
 ```
+
+**テスト結果**: 12/12 テスト合格 ✅
 
 ### コード品質チェック
 
 ```bash
-# コードフォーマット
+# フォーマット
 black src tests
 
-# Lintチェック
+# Lint
 flake8 src tests
 
 # 型チェック
 mypy src
-
-# セキュリティチェック
-bandit -r src
 ```
 
-## プロジェクト構造
+---
+
+## 📁 プロジェクト構造
 
 ```
 youtube-video-analyzer/
-├── research/                   # 企画・設計ドキュメント
-│   ├── youtube-video-analyzer-requirements.md
-│   ├── implementation-plan.md
-│   └── why-build-dedicated-app.md
 ├── src/                        # ソースコード
 │   ├── main.py                 # エントリーポイント
 │   ├── ui/                     # UIレイヤー
+│   │   ├── main_window.py      # メインウィンドウ
+│   │   ├── search_panel.py     # 検索パネル
+│   │   ├── result_panel.py     # 結果表示
+│   │   └── history_panel.py    # 検索履歴
 │   ├── application/            # アプリケーションレイヤー
+│   │   ├── video_search_service.py
+│   │   ├── preset_service.py
+│   │   └── history_service.py
 │   ├── domain/                 # ドメインレイヤー
+│   │   └── models.py           # データモデル
 │   ├── infrastructure/         # インフラレイヤー
+│   │   ├── youtube_client.py   # YouTube API
+│   │   ├── excel_exporter.py   # Excel出力
+│   │   └── sheets_exporter.py  # Google Sheets
 │   ├── utils/                  # ユーティリティ
-│   └── database/               # データベース関連
+│   │   └── logger.py
+│   └── database/               # データベース
+│       └── init_db.py
 ├── tests/                      # テストコード
-├── docs/                       # ユーザー向けドキュメント
+│   ├── test_models.py
+│   ├── test_youtube_client.py
+│   └── test_integration.py
+├── docs/                       # ドキュメント
+│   ├── installation-guide.md
+│   ├── user-manual.md
+│   └── youtube-api-setup-guide.md
+├── research/                   # 設計ドキュメント
+│   ├── phase0-completion-report.md
+│   ├── phase1-completion-report.md
+│   ├── phase2-completion-report.md
+│   ├── phase3-completion-report.md
+│   ├── phase4-completion-report.md
+│   └── phase5-completion-report.md
 ├── .env.example                # 環境変数テンプレート
-├── .gitignore                  # Git除外設定
 ├── requirements.txt            # 依存パッケージ
 ├── requirements-dev.txt        # 開発用パッケージ
+├── CLAUDE.MD                   # 開発者向けドキュメント
 └── README.md                   # このファイル
 ```
 
-## 技術スタック
+---
 
-- **言語**: Python 3.10+
-- **GUI**: Tkinter
-- **YouTube API**: google-api-python-client
-- **Excel出力**: openpyxl
-- **Google Sheets**: gspread
-- **データベース**: SQLite
-- **テスト**: pytest
+## 🔧 技術スタック
 
-## ライセンス
+| カテゴリ | 技術 |
+|---------|------|
+| **言語** | Python 3.10+ |
+| **GUI** | Tkinter (ttk) |
+| **YouTube API** | google-api-python-client |
+| **Excel出力** | openpyxl |
+| **Google Sheets** | gspread, google-auth |
+| **データベース** | SQLite3 |
+| **テスト** | pytest, pytest-mock |
+| **コード品質** | black, flake8, mypy |
 
-[ライセンスを記載]
+---
 
-## 貢献
+## 🐛 トラブルシューティング
 
-[コントリビューション方法を記載]
+### よくある問題
 
-## 作成者
+#### Q: 「YouTube API キーが設定されていません」エラー
 
-[作成者情報を記載]
+**A**: `.env`ファイルにAPIキーが正しく設定されているか確認してください。
 
-## 関連リンク
+```bash
+# .env ファイルの内容を確認
+cat .env
+
+# 正しい形式
+YOUTUBE_API_KEY=your_actual_api_key_here
+```
+
+#### Q: 検索結果が0件
+
+**A**: 以下を確認：
+1. APIクォータが残っているか（1日10,000ユニット）
+2. 検索条件が厳しすぎないか
+3. キーワードが適切か
+
+#### Q: モジュールが見つからないエラー
+
+**A**: 仮想環境を有効化して依存パッケージを再インストール
+
+```bash
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+**詳細は [インストールガイド](./docs/installation-guide.md#トラブルシューティング) を参照**
+
+---
+
+## 📝 ライセンス
+
+このプロジェクトはMITライセンスの下で公開されています。
+
+---
+
+## 🤝 貢献
+
+バグ報告や機能リクエストは [GitHub Issues](https://github.com/your-repo/issues) でお願いします。
+
+プルリクエストも歓迎します！
+
+---
+
+## 👨‍💻 開発履歴
+
+- **Phase 0** (2025-11): 環境構築・準備
+- **Phase 1** (2025-11): コア機能実装
+- **Phase 2** (2025-11): UI実装
+- **Phase 3** (2025-11): エクスポート・拡張機能
+- **Phase 4** (2025-11): UI拡張・統合テスト
+- **Phase 5** (2025-11): リリース準備・ドキュメント整備
+
+詳細は各Phase完了報告書（`research/`）を参照してください。
+
+---
+
+## 🔗 関連リンク
 
 - [YouTube Data API v3 公式ドキュメント](https://developers.google.com/youtube/v3)
+- [Google API Python Client](https://github.com/googleapis/google-api-python-client)
 - [openpyxl ドキュメント](https://openpyxl.readthedocs.io/)
 - [gspread ドキュメント](https://docs.gspread.org/)
+
+---
+
+<p align="center">
+  Made with ❤️ by Claude Code
+</p>

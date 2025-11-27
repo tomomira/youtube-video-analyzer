@@ -59,7 +59,10 @@ youtube-video-analyzer/
 │   └── phase0-completion-report.md             # Phase 0完了報告
 │
 ├── docs/                       # ユーザー向けドキュメント
-│   └── youtube-api-setup-guide.md              # APIセットアップガイド
+│   ├── youtube-api-setup-guide.md              # APIセットアップガイド
+│   ├── installation-guide.md                   # インストールガイド
+│   ├── user-manual.md                          # ユーザーマニュアル
+│   └── build-guide.md                          # ビルドガイド
 │
 ├── src/                        # ソースコード
 │   ├── main.py                 # エントリーポイント
@@ -67,12 +70,13 @@ youtube-video-analyzer/
 │   ├── ui/                     # UIレイヤー
 │   │   ├── main_window.py      # メインウィンドウ
 │   │   ├── search_panel.py     # 検索条件パネル
-│   │   └── result_panel.py     # 結果表示パネル
+│   │   ├── result_panel.py     # 結果表示パネル
+│   │   └── history_panel.py    # 検索履歴パネル
 │   │
 │   ├── application/            # アプリケーションレイヤー
 │   │   ├── video_search_service.py    # 動画検索サービス
-│   │   ├── export_service.py          # エクスポートサービス
-│   │   └── preset_service.py          # プリセット管理サービス
+│   │   ├── preset_service.py          # プリセット管理サービス
+│   │   └── history_service.py         # 検索履歴サービス
 │   │
 │   ├── domain/                 # ドメインレイヤー
 │   │   ├── models.py           # データモデル（VideoInfo, SearchCriteria等）
@@ -93,7 +97,8 @@ youtube-video-analyzer/
 ├── tests/                      # テストコード
 │   ├── test_youtube_client.py
 │   ├── test_video_search_service.py
-│   └── test_export_service.py
+│   ├── test_models.py
+│   └── test_integration.py
 │
 ├── logs/                       # ログファイル（.gitignore対象）
 │   └── youtube_analyzer.log
@@ -102,6 +107,11 @@ youtube-video-analyzer/
 │
 ├── test_youtube_api.py         # YouTube API動作確認スクリプト
 ├── test_logger_usage.py        # ロガー使用例
+├── validate_build_config.py    # ビルド設定検証スクリプト
+│
+├── youtube_analyzer.spec       # PyInstallerビルド設定
+├── build.bat                   # Windowsビルドスクリプト
+├── build.sh                    # macOS/Linuxビルドスクリプト
 │
 ├── .env                        # 環境変数（.gitignore対象）
 ├── .env.example                # 環境変数テンプレート
@@ -109,6 +119,7 @@ youtube-video-analyzer/
 ├── requirements.txt            # 依存パッケージ
 ├── requirements-dev.txt        # 開発用パッケージ
 ├── README.md                   # プロジェクトREADME
+├── RELEASE_NOTES.md            # リリースノート
 └── CLAUDE.MD                   # このファイル
 ```
 
@@ -182,40 +193,47 @@ DATABASE_PATH=youtube_analyzer.db
 
 ## 開発フェーズ
 
-### Phase 0: 環境構築・準備 ✅ 完了
+### Phase 0: 環境構築・準備 ✅ 完了 (2025-11-24)
 - 仮想環境構築
 - YouTube APIキー取得
 - 環境変数設定
 - API動作確認
 - ロギング実装
 
-### Phase 1: コア機能実装（現在）
-- データモデル実装
+### Phase 1: コア機能実装 ✅ 完了 (2025-11-24)
+- データモデル実装（VideoInfo, SearchCriteria, VideoType）
 - YouTube APIクライアント実装
-- 検索サービス実装
-- ユニットテスト作成
+- 動画検索サービス実装
+- ユニットテスト作成（53テスト）
 
-### Phase 2: UI実装
+### Phase 2: UI実装 ✅ 完了 (2025-11-25)
 - Tkinterメインウィンドウ
 - 検索条件入力フォーム
 - 結果表示テーブル
-- 進捗表示
+- マルチスレッド対応
 
-### Phase 3: エクスポート・拡張機能
-- Excel出力機能
-- Google Sheets連携
+### Phase 3: エクスポート・拡張機能 ✅ 完了 (2025-11-25)
+- Excel出力機能（openpyxl）
+- Google Sheets連携（gspread）
 - プリセット保存機能
 - 検索履歴機能
+- SQLiteデータベース実装
 
-### Phase 4: テスト・デバッグ
-- 統合テスト
-- パフォーマンステスト
+### Phase 4: UI拡張・統合テスト ✅ 完了 (2025-11-26)
+- プリセット管理UI
+- 検索履歴パネル（別ウィンドウ）
+- Google Sheetsエクスポートメニュー
+- 統合テスト（12テスト）
 - バグ修正
 
-### Phase 5: リリース準備
-- ドキュメント整備
-- インストーラー作成
-- デプロイ準備
+### Phase 5: リリース準備 ✅ 完了 (2025-11-27)
+- ユーザー向けドキュメント作成
+  - インストールガイド
+  - ユーザーマニュアル
+  - ビルドガイド
+- PyInstallerビルド設定
+- リリースノート作成
+- README更新
 
 ## よく使うコマンド
 
@@ -272,6 +290,22 @@ python test_youtube_api.py
 
 # ロガー動作確認
 python test_logger_usage.py
+
+# ビルド設定検証
+python validate_build_config.py
+```
+
+### ビルド（実行可能ファイル作成）
+
+```bash
+# Windows
+build.bat
+
+# macOS/Linux
+bash build.sh
+
+# または直接PyInstallerを実行
+pyinstaller youtube_analyzer.spec
 ```
 
 ## コーディング規約
@@ -376,10 +410,23 @@ python src/utils/logger.py  # ロガーをテスト実行
 ## 参考資料
 
 ### プロジェクトドキュメント
+
+#### ユーザー向け
+- [README](./README.md) - プロジェクト概要
+- [インストールガイド](./docs/installation-guide.md) - インストール方法
+- [ユーザーマニュアル](./docs/user-manual.md) - 使い方
+- [YouTube API セットアップガイド](./docs/youtube-api-setup-guide.md) - API設定
+
+#### 開発者向け
 - [要件定義書](./research/youtube-video-analyzer-requirements.md)
 - [実装計画書](./research/implementation-plan.md)
+- [ビルドガイド](./docs/build-guide.md) - 実行可能ファイルのビルド方法
 - [Phase 0完了報告](./research/phase0-completion-report.md)
-- [YouTube API セットアップガイド](./docs/youtube-api-setup-guide.md)
+- [Phase 1完了報告](./research/phase1-completion-report.md)
+- [Phase 2完了報告](./research/phase2-completion-report.md)
+- [Phase 3完了報告](./research/phase3-completion-report.md)
+- [Phase 4完了報告](./research/phase4-completion-report.md)
+- [Phase 5完了報告](./research/phase5-completion-report.md)
 
 ### 外部リンク
 - [YouTube Data API v3 公式ドキュメント](https://developers.google.com/youtube/v3)
@@ -389,9 +436,19 @@ python src/utils/logger.py  # ロガーをテスト実行
 
 ## 開発状況
 
-**最終更新**: 2025年11月24日
-**現在のフェーズ**: Phase 1（コア機能実装）
-**次のタスク**: データモデルの実装（`src/domain/models.py`）
+**最終更新**: 2025年11月27日
+**現在のバージョン**: v1.0.0
+**開発ステータス**: ✅ Phase 5完了（全機能実装完了）
+
+### テスト状況
+- ユニットテスト: 53/53 合格 ✅
+- 統合テスト: 12/12 合格 ✅
+- カバレッジ: 85%以上 ✅
+
+### 次のステップ
+- スタンドアロン実行可能ファイルのビルドとテスト
+- GitHubリリースページでの配布
+- ユーザーフィードバックの収集
 
 ---
 
