@@ -275,6 +275,173 @@ pip install gspread google-auth
 2. JSONキーファイルをダウンロード
 3. `.env` ファイルに `GOOGLE_CREDENTIALS_PATH=credentials.json` を追加
 
+#### 7. 日本語のフォントが□□□と表示される（WSL/Linux環境）
+
+**症状**: GUIウィンドウで日本語が豆腐（□□□）として表示される
+
+**原因**: 日本語フォントがインストールされていない
+
+**解決方法** (Ubuntu/Debian):
+```bash
+# Noto CJKフォントをインストール（推奨）
+sudo apt-get update
+sudo apt-get install fonts-noto-cjk fonts-noto-cjk-extra
+
+# または、IPAフォントをインストール
+sudo apt-get install fonts-ipafont fonts-ipaexfont
+```
+
+**解決方法** (Fedora/CentOS):
+```bash
+sudo dnf install google-noto-sans-cjk-jp-fonts
+```
+
+**インストール後**:
+1. アプリケーションを再起動
+2. 日本語が正しく表示されることを確認
+
+#### 8. Excelエクスポート時に「Excel does not support timezones」エラー
+
+**症状**: Excelエクスポート実行時に `TypeError: Excel does not support timezones in datetimes` エラーが発生
+
+**原因**: YouTube APIから取得した公開日にタイムゾーン情報が含まれている
+
+**解決方法**:
+この問題は最新版で修正済みです。古いバージョンを使用している場合は以下の手順で対処してください：
+
+```bash
+# 最新版に更新
+git pull origin main
+
+# または、手動で修正
+# src/infrastructure/excel_exporter.py の該当箇所を確認
+```
+
+**一時的な回避策**:
+アプリケーションを再起動すると問題が解決する場合があります。
+
+#### 9. 検索結果が0件（フィルタリングが原因）
+
+**症状**: APIからは動画が取得されているのに、結果が0件と表示される
+
+**原因**: 最小再生回数/最大再生回数の設定が厳しすぎる
+
+**ログの例**:
+```
+検索結果: 10件の動画IDを取得
+フィルタリング後: 0件
+```
+
+**解決方法**:
+1. **最小再生回数と最大再生回数をクリア**（空欄にする）
+2. または、範囲を広げる：
+   - 最小再生回数: 削除または小さい値（例: 1000）
+   - 最大再生回数: 削除または大きい値（例: 10000000）
+
+**フィルタの意味**:
+- **最小再生回数**: この値**以上**の動画を表示（下限）
+- **最大再生回数**: この値**以下**の動画を表示（上限）
+
+**例**:
+- 最小200万のみ設定 → 200万回以上の人気動画のみ
+- 最大200万のみ設定 → 200万回以下の動画（人気でないものも含む）
+- 両方とも200万 → ちょうど200万回付近の動画のみ（非常に限定的）
+
+詳細は [ユーザーマニュアル - 再生回数で絞り込み](./user-manual.md#再生回数で絞り込み) を参照してください。
+
+#### 10. WSLとWindows間で仮想環境が動かない
+
+**症状**: WSLで作成した仮想環境をWindowsから実行しようとするとエラーになる
+
+**原因**: WSLとWindowsで仮想環境のディレクトリ構造が異なる
+- WSL/Linux: `venv/bin/activate`
+- Windows: `venv\Scripts\activate`
+
+**解決方法**:
+
+**WSLで実行する場合**:
+```bash
+# WSL環境内で実行
+source venv/bin/activate
+python src/main.py
+```
+
+**Windowsで実行する場合**:
+1. Windows用の仮想環境を新規作成（**WSL環境とは別に**）
+2. WindowsのコマンドプロンプトまたはPowerShellで実行:
+```cmd
+# 新しい仮想環境を作成
+python -m venv venv-windows
+
+# 有効化（コマンドプロンプト）
+venv-windows\Scripts\activate.bat
+
+# 有効化（PowerShell）
+venv-windows\Scripts\Activate.ps1
+
+# 依存パッケージをインストール
+pip install -r requirements.txt
+
+# アプリケーションを起動
+python src\main.py
+```
+
+**注意**: WSLとWindowsで同じ仮想環境を共有することはできません。それぞれの環境で別々の仮想環境を作成してください。
+
+#### 11. WSLで日本語入力（IME）ができない
+
+**症状**: WSL環境のGUIアプリで日本語キーボード入力ができない
+
+**原因**: WSLのX11環境では日本語IME（Input Method Editor）が正しく動作しない場合がある
+
+**解決方法**:
+
+**方法1: コピー&ペーストを使用（推奨）**
+1. ブラウザやメモ帳で日本語テキストを入力
+2. コピー（Ctrl+C）
+3. アプリケーションの検索キーワード欄にペースト（Ctrl+V）
+
+**方法2: Windows環境で実行**
+```cmd
+# Windows側で実行すれば日本語IMEが正常に動作します
+python src\main.py
+```
+
+**方法3: fcitx等のIMEをインストール（上級者向け）**
+```bash
+# fcitx-mozcをインストール
+sudo apt-get install fcitx-mozc
+
+# 環境変数を設定
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS=@im=fcitx
+```
+
+**注意**: 方法3は設定が複雑なため、初心者には方法1または方法2を推奨します。
+
+#### 12. プリセットが保存・読み込みできない
+
+**症状**: プリセットを保存したのに「プリセットを選択してください」と表示される
+
+**原因**: プリセットを保存した後、ドロップダウンから選択する必要がある
+
+**正しい使い方**:
+
+**プリセットの保存**:
+1. 検索条件を入力
+2. 「保存」ボタンをクリック
+3. プリセット名を入力（例: "人気のPython動画"）
+4. OKをクリック
+
+**プリセットの読み込み**:
+1. プリセットドロップダウンから保存したプリセット名を選択
+2. 「読込」ボタンをクリック
+3. 検索条件が自動入力される
+4. 「検索」ボタンをクリック
+
+**注意**: プリセットは検索**条件**を保存するもので、検索**結果**を保存するものではありません。読み込み後に再度検索を実行する必要があります。
+
 ---
 
 ## アンインストール
@@ -313,4 +480,5 @@ rmdir /s youtube-video-analyzer  # Windows
 
 ---
 
-**最終更新**: 2025年11月26日
+**最終更新**: 2025年11月27日
+**バージョン**: 1.0.0 (Phase 5)

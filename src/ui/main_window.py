@@ -213,8 +213,21 @@ class MainWindow:
         Args:
             videos: エクスポートする動画リスト
         """
-        # ファイル保存ダイアログ
+        # outputフォルダを作成（存在しない場合）
+        import os
+        output_dir = "output"
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+            logger.info(f"出力フォルダを作成しました: {output_dir}")
+
+        # デフォルトのファイル名（日時付き）
+        from datetime import datetime
+        default_filename = f"youtube_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+
+        # ファイル保存ダイアログ（outputフォルダをデフォルトに）
         filename = filedialog.asksaveasfilename(
+            initialdir=output_dir,
+            initialfile=default_filename,
             defaultextension=".xlsx",
             filetypes=[("Excelファイル", "*.xlsx"), ("すべてのファイル", "*.*")],
             title="エクスポート先を選択"

@@ -1,0 +1,12 @@
+youtube-video-analyzer 簡易的起動方法
+
+  # WSL環境
+  cd C:\Users\tomom\docker-container-2025\test\youtube-video-analyzer
+  wsl -d Ubuntu
+  
+  # 仮想環境
+  source venv/bin/activate
+
+  # アプリケーションを起動
+  python src/main.py
+

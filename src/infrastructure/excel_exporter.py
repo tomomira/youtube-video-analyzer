@@ -147,9 +147,11 @@ class ExcelExporter:
         comments_cell.value = video.comment_count
         comments_cell.number_format = '#,##0'
 
-        # 公開日
+        # 公開日（タイムゾーン情報を削除）
         published_cell = ws.cell(row=row_idx, column=9)
-        published_cell.value = video.published_at
+        # Excelはタイムゾーン付きdatetimeをサポートしないため、タイムゾーンを削除
+        published_at_naive = video.published_at.replace(tzinfo=None) if video.published_at.tzinfo else video.published_at
+        published_cell.value = published_at_naive
         published_cell.number_format = 'yyyy-mm-dd'
 
         # 動画の長さ

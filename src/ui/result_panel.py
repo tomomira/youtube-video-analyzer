@@ -76,7 +76,8 @@ class ResultPanel(ttk.Frame):
             'views',
             'duration',
             'published',
-            'type'
+            'type',
+            'url'
         )
 
         self.tree = ttk.Treeview(
@@ -98,6 +99,7 @@ class ResultPanel(ttk.Frame):
         self.tree.heading('duration', text='長さ', command=lambda: self._sort_column('duration'))
         self.tree.heading('published', text='公開日', command=lambda: self._sort_column('published'))
         self.tree.heading('type', text='種類', command=lambda: self._sort_column('type'))
+        self.tree.heading('url', text='URL', command=lambda: self._sort_column('url'))
 
         # カラムの幅設定
         self.tree.column('title', width=300, minwidth=200)
@@ -106,6 +108,7 @@ class ResultPanel(ttk.Frame):
         self.tree.column('duration', width=80, minwidth=60, anchor=tk.E)
         self.tree.column('published', width=100, minwidth=80)
         self.tree.column('type', width=80, minwidth=60, anchor=tk.CENTER)
+        self.tree.column('url', width=350, minwidth=250)
 
         self.tree.pack(fill=tk.BOTH, expand=True)
 
@@ -151,7 +154,8 @@ class ResultPanel(ttk.Frame):
                     views_formatted,
                     duration_formatted,
                     published_formatted,
-                    video_type
+                    video_type,
+                    video.url
                 ),
                 tags=(video.video_id,)
             )
